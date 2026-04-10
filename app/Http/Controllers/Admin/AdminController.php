@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\Testimonial;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -27,8 +30,46 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.dashboard', compact(
-            'pending', 'services', 'stats', 'pendingTestimonials'
+            'pending',
+            'services',
+            'stats',
+            'pendingTestimonials'
         ));
+    }
+
+    // Categories
+    public function categories()
+    {
+        $categories = \App\Models\Category::orderBy('sort_order')->get();
+        return view('admin.categories', compact('categories'));
+    }
+
+    public function categoryStore(Request $request)
+    {
+        $request->validate([
+            'name'       => 'required|max:100',
+            'slug'       => 'required|unique:categories,slug|max:100',
+            'icon'       => 'nullable|max:50',
+            'color'      => 'nullable|max:20',
+            'sort_order' => 'nullable|integer',
+        ]);
+
+        \App\Models\Category::create([
+            'name'         => $request->name,
+            'slug'         => \Illuminate\Support\Str::slug($request->slug),
+            'icon'         => $request->icon ?? 'fa-wrench',
+            'color'        => $request->color ?? '#1E3A8A',
+            'sort_order'   => $request->sort_order ?? 0,
+            'is_emergency' => $request->boolean('is_emergency'),
+        ]);
+
+        return back()->with('success', 'Category added!');
+    }
+
+    public function categoryDestroy(\App\Models\Category $category)
+    {
+        $category->delete();
+        return back()->with('success', 'Category deleted.');
     }
 
     public function approve(Service $service)

@@ -44,5 +44,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/services/{service}/verify', [\App\Http\Controllers\Admin\AdminController::class, 'verify'])->name('services.verify');
     Route::post('/testimonials/{testimonial}/approve', [\App\Http\Controllers\Admin\AdminController::class, 'approveTestimonial'])->name('testimonials.approve');
     Route::delete('/testimonials/{testimonial}', [\App\Http\Controllers\Admin\AdminController::class, 'deleteTestimonial'])->name('testimonials.delete');
+    Route::get('/categories', [\App\Http\Controllers\Admin\AdminController::class, 'categories'])->name('categories.index');
+    Route::post('/categories', [\App\Http\Controllers\Admin\AdminController::class, 'categoryStore'])->name('categories.store');
+    Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\AdminController::class, 'categoryDestroy'])->name('categories.destroy');
+
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/users/{user}/role', [\App\Http\Controllers\Admin\UserController::class, 'changeRole'])->name('users.role');
 });
 require __DIR__ . '/auth.php';
